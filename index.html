@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Paginacion Directive</title>
+</head>
+
+<body ng-app="myapp">
+
+<div ng-controller="ctrlmain">
+
+	<input type="text" name="txtbusqueda" ng-model="filtro">
+
+	<li ng-pagination="user in usuarios" ng-page-size="1">{{user.nombre}}</li>
+
+	<h1>{{pageSize}}</h1>
+</div>
+
+
+<script type="text/javascript" src="angular/angular.min.js"></script>
+<script type="text/javascript" src="angular/angular-pagination.js"></script>
+
+<script type="text/javascript">
+	angular.module('myapp', ['ngPagination']).
+
+	controller('ctrlmain',function($scope, $parse){
+		$scope.pageSize = 0;
+
+		$parse('prueba').assign($scope, 'hola mundo');
+		// console.log($scope.$eval('prueba'));
+		// console.log($parse('prueba')($scope));
+
+		$scope.usuarios = [{nombre:'walter'},{nombre:'andrea'},{nombre:'juan'},{nombre:'mario'}];
+	});
+</script>
+
+</body>
+</html>
