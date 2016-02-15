@@ -26,9 +26,9 @@ directive('ngPagination', function($parse, $compile, $timeout){
 	    restrict: 'A',
 		scope: false,
 		compile: function(tElement, tAttrs) {
-			tElement.attr('ng-pagination',atributo + " | startFrom:pageSize");
 			var atributo = tElement.attr('ng-pagination');
-			tElement.attr('ng-repeat', atributo);
+			tElement.attr('ng-pagination',atributo + " | startFrom:pageSize");
+			tElement.attr('ng-repeat',tElement.attr('ng-pagination'));
 			tElement.removeAttr('ng-pagination');
 
 			return function(scope, element, attr){
