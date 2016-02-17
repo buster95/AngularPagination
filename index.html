@@ -8,16 +8,13 @@
 <body ng-app="myapp">
 
 <div ng-controller="ctrlmain">
+	<ng-pagination-search pagination-id="usuarios" placeholder="ingrese busqueda"></ng-pagination-search>
+	<li ng-pagination="user in usuarios" ng-pagination-size="10">{{user.nombre}}</li>
+	<ng-pagination-control pagination-id="usuarios" color="white" height="35px"></ng-pagination-control>
 
-	<input type="text" name="txtbusqueda" ng-model="filtro">
-
-	<li ng-pagination="user in usuarios" ng-pagination-size="2">{{user.nombre}}</li>
-	<ng-pagination-control ng-pagination-id="usuarios" color="white" height="35px"></ng-pagination-control>
-
+	<ng-pagination-search pagination-id="clientes"></ng-pagination-search>
 	<li ng-pagination="cliente in clientes" ng-pagination-size="2">{{cliente.cliente}}</li>
-	<ng-pagination-control ng-pagination-id="clientes" color="white" height="35px"></ng-pagination-control>
-
-	<h1>Cantidad de Datos a Mostrar: {{pag_usuarios.pageSize}}</h1>
+	<ng-pagination-control pagination-id="clientes" color="white" height="35px"></ng-pagination-control>
 </div>
 
 
@@ -28,11 +25,11 @@
 	angular.module('myapp', ['ngPagination']).
 
 	controller('ctrlmain',function($scope, $parse){
-		$parse('prueba').assign($scope, 'hola mundo');
+		// $parse('prueba').assign($scope, 'hola mundo');
 		// console.log($scope.$eval('prueba'));
 		// console.log($parse('prueba')($scope));
 
-		$scope.usuarios = [{nombre:'walter'},{nombre:'andrea'},{nombre:'juan'},{nombre:'mario'}];
+		$scope.usuarios = [{nombre:'walter', apellido:'corrales'},{nombre:'andrea', apellido:'corrales'},{nombre:'juan', apellido:'corrales'},{nombre:'mario', apellido:'corrales'}];
 		$scope.clientes = [{cliente:'axel'},{cliente:'oscar'},{cliente:'lester'},{cliente:'cesar'},{cliente:'edwin'}];
 	});
 </script>

@@ -1,7 +1,4 @@
-
-var app = angular.module('ngPagination', []).
-
-
+angular.module('ngPagination', []).
 
 filter('startFrom', function() {
     return function(input, inicio) {
@@ -14,7 +11,8 @@ filter('startFrom', function() {
 
 
 
-service('$register', function($injector){
+// SERIVICIO PARA REGISTRAR LAS VARIABLES QUE AYUDAN A PAGINAR
+service('$paginationRegister', function($injector){
 	function registerMetodos () {
 		this.page_id = '';
 		this.variable = '';
@@ -45,6 +43,9 @@ service('$register', function($injector){
 	registerMetodos.prototype.getBeforeNotation = function () {
 		return this.page_id + '.beforePage';
 	}
+	registerMetodos.prototype.getSearchNotation = function () {
+		return 'txt_search_'+this.variable;
+	}
 
 	return function() {
 		return $injector.instantiate(registerMetodos);
@@ -56,21 +57,7 @@ service('$register', function($injector){
 
 
 
-
-
-
-
-
-
-directive('ngPagination', function($compile, $parse, $register){
-	var registro;
-
-	var createID = function (scope, id) {
-		registro = new $register();
-		registro.set(id);
-		$parse(registro.get()).assign(scope, {pageCurrent:0, pageSize: 5, pages: 1, nextPage: function(){}, beforePage: function(){}});
-	}
-
+directive('ngPagination', function($compile, $parse, $paginationRegister){
 	var getVarname = function (RepeatValue) {
 		var variable = RepeatValue.replace(' in ','~');
 		variable = variable.replace(' | ','~');
@@ -85,15 +72,18 @@ directive('ngPagination', function($compile, $parse, $register){
     }
 
 	return {
-		priority: 10,
+		priority: 15,
 	    restrict: 'A',
 		scope: false,
 		compile: function(tElement, tAttrs) {
 			// COMPILE RETURNED LINKED
 			return function(scope, element, attr){
 				var atributo = element.attr('ng-pagination');
-				var varName = getVarname(element.attr('ng-pagination'));
-				createID(scope, varName);
+				var dataNotation = getVarname(element.attr('ng-pagination'));
+
+				var registro = new $paginationRegister();
+				registro.set(dataNotation);
+				$parse(registro.get()).assign(scope, {pageCurrent:0, pageSize: 5, pages: 1, nextPage: function(){}, beforePage: function(){}});
 
 				// ADD ng-repeat Y QUITANDO EL ng-pagination PARA EVITAR LOOP
 				element.attr('ng-pagination', atributo + " | startFrom:"+
@@ -102,8 +92,8 @@ directive('ngPagination', function($compile, $parse, $register){
 				element.attr('ng-repeat', element.attr('ng-pagination'));
 				element.removeAttr('ng-pagination');
 
-				// NOMBRE DE LA VARIABLE DE LOS DATOS
-				var datos = $parse(varName)(scope);
+				// DATOS OBTENIDOS POR EL NOMBRE DE VARIABLE
+				var datos = $parse(dataNotation)(scope);
 
 				// NUMERO DE DATOS POR PAGINA
 				var size = Number(element.attr('ng-pagination-size')) + 0;
@@ -117,6 +107,15 @@ directive('ngPagination', function($compile, $parse, $register){
 					$parse(registro.getPagesNotation()).assign(scope, Number(paginas));
 				}
 
+				scope.$watch(dataNotation, function () {
+					var dataNot = registro.getDataNotation();
+					var sizeNot = registro.getSizeNotation();
+					var paginas = getPaginas($parse(dataNot)(scope), $parse(sizeNot)(scope));
+					if(paginas!=undefined && paginas!=''){
+						$parse(registro.getPagesNotation()).assign(scope, Number(paginas));
+					}
+				});
+
 				$compile(element)(scope);
 			}
 		}
@@ -128,12 +127,12 @@ directive('ngPagination', function($compile, $parse, $register){
 
 
 
-directive('ngPaginationControl', function($parse, $compile, $register){
+directive('ngPaginationControl', function($parse, $compile, $paginationRegister){
 	// VARIABLES PARA CREAR ESTILO
 	var fondo='#337AB7';
 	var fondoHover='#286090';
 	var color='white';
-	var alto= '30px';
+	var alto= '40px';
 	var borderRadius='6px';
 
 	function CreateStyle() {
@@ -143,7 +142,7 @@ directive('ngPaginationControl', function($parse, $compile, $register){
 			'display: inline-block;'+
 			'background-color: '+fondo+';'+
 			'border: 1px solid #2e6da4;'+
-			'height: '+alto+';'+
+			'--height: '+alto+';'+
 			'border-radius: '+borderRadius+';'+
 		'}'+
 		'.pagination-panel .indicator{'+
@@ -151,6 +150,7 @@ directive('ngPaginationControl', function($parse, $compile, $register){
 			'font-weight: bold;'+
 			'font-size: 15px;'+
 			'padding: 0px 8px;'+
+			'line-height: 0;'+
 		'}'+
 		'.pagination-panel button{'+
 			'background-color: '+fondo+';'+
@@ -172,7 +172,8 @@ directive('ngPaginationControl', function($parse, $compile, $register){
 			'border-left: none;'+
 		'}'+
 		'.pagination-panel button[disabled]{'+
-			'background-color: orange;'+
+			'color: #E9F1F5;'+
+			'background-color: #D1D5D8;'+
 			'cursor: not-allowed;'+
 		'}'+
 		'</style>';
@@ -180,21 +181,17 @@ directive('ngPaginationControl', function($parse, $compile, $register){
 	}
 
 	return {
-		priority: 5,
+		priority: 10,
 		restrict: 'E',
-		replace: true,
 		scope: false,
 
-
-
-
 		compile: function (element, attrs) {
-			var registro = new $register;
-			if(element.attr('ng-pagination-id')==undefined
-				|| element.attr('ng-pagination-id')==''){
-				throw "directiva ng-pagination-control requiere atributo ng-pagination-id\n";
+			var registro = new $paginationRegister;
+			if(element.attr('pagination-id')==undefined
+				|| element.attr('pagination-id')==''){
+				throw "directiva NG-PAGINATION-CONTROL requiere atributo pagination-id\n";
 			}else{
-				registro.set(element.attr('ng-pagination-id'));
+				registro.set(element.attr('pagination-id'));
 			}
 
 			if(element.attr('background')!=undefined && element.attr('background')!=''){
@@ -211,6 +208,7 @@ directive('ngPaginationControl', function($parse, $compile, $register){
 			}
 			CreateStyle();
 
+			// COMPILE RETURNED LINKED
 			return function (scope, element, atributos) {
 				var controls = angular.element('<div class="pagination-panel">'+
 					'<button ng-click="'+registro.getBeforeNotation()+'()" type="button"'+
@@ -234,9 +232,127 @@ directive('ngPaginationControl', function($parse, $compile, $register){
 					$parse(registro.getCurrentNotation()).assign(scope, actual);
 				});
 
-
 				$compile(controls)(scope);
 				element.replaceWith(controls);
+			}
+		}
+	};
+}).
+
+
+
+
+
+
+directive('ngPaginationSearch', function($compile, $parse, $paginationRegister){
+	function filtrar(datos, filtro) {
+		var busqueda=[];
+		angular.forEach(datos, function(fila) {
+			for(key in fila){
+				var propiedad = fila[key];
+				if (CompararFn(fila[key], filtro)) {
+    				busqueda.push(fila);
+    				return;
+				}
+			}
+		});
+		return busqueda;
+    }
+
+    function CompararFn(value1, value2) {
+    	if(angular.isString(value1)){
+    		value1 = value1.toLowerCase();
+    	}
+   		if (angular.isString(value2)) {
+    		value2 = value2.toLowerCase();
+    	}
+
+    	if (angular.isString(value1) && angular.isString(value2)) {
+    		if (value1.indexOf(value2)>-1) {
+    			return true;
+    		}
+    	}
+    	if(angular.isNumber(value1) && angular.isNumber(value2)){
+    		if(value1==value2){
+    			return true;
+    		}
+    	}
+
+    	if (angular.isString(value1) && angular.isNumber(value2)) {
+    		if(value1.indexOf(value2)>-1){
+    			return true;
+    		}
+    	}
+
+    	return false;
+    }
+
+	return {
+		priority: 5,
+		scope: false,
+		restrict: 'E',
+
+		compile: function(iElement, attrs){
+			var registro = new $paginationRegister();
+			if(iElement.attr('pagination-id')==undefined
+				|| iElement.attr('pagination-id')==''){
+				throw "directiva NG-PAGINATION-SEARCH requiere atributo pagination-id\n";
+			}else{
+				registro.set(iElement.attr('pagination-id'));
+			}
+
+			// COMPILE RETURNED LINKED
+			return function (scope, element, atributos){
+				var dataNotation = registro.getDataNotation();
+				var data = $parse(dataNotation)(scope);
+
+				var tempDataNotation = registro.getDataNotation()+'_tmp';
+				var tempData = $parse(tempDataNotation).assign(scope, data);
+
+
+				// VARIABLES PARA GENERAR ESTILO
+				var clases;
+				var id_element;
+				var value;
+				var name;
+				var placeholder;
+				var modelo = registro.getSearchNotation();
+				var input = angular.element('<input ng-model="'+modelo+'">');
+
+				if(element.attr('class')!=undefined && element.attr('class')!=''){
+					clases = element.attr('class');
+					input.attr('class',clases);
+				}
+				if(element.attr('id')!=undefined && element.attr('id')!=''){
+					id_element = element.attr('id');
+					input.attr('class',clases);
+				}
+				if(element.attr('value')!=undefined && element.attr('value')!=''){
+					value = element.attr('value');
+					$parse(modelo).assign(scope, value);
+					input.attr('value', value);
+				}
+				if(element.attr('placeholder')!=undefined && element.attr('placeholder')!=''){
+					placeholder = element.attr('placeholder');
+					input.attr('placeholder', placeholder);
+				}
+
+				// EVENTO WATCH PARA EL CAMBIO DEL INPUT EN BUSQUEDA
+				scope.$watch(modelo, function () {
+					// CAPTURANDO EL VALOR DEL INPUT
+					var filtro = $parse(modelo)(scope);
+					// AL MOMENTO DE BUSQUEDA MANDAR EL CURRENT PAGE A 0 PARA QUE SE VAYA A LA PRIMERA PAGINA
+					$parse(registro.getCurrentNotation()).assign(scope, 0);
+					if(filtro==undefined || filtro==''){
+						$parse(dataNotation).assign(scope, tempData);
+					}else{
+						var resultado = filtrar(tempData, filtro);
+						$parse(dataNotation).assign(scope, resultado);
+					}
+				});
+
+				$compile(input)(scope);
+				element.replaceWith(input);
 			}
 		}
 	};
