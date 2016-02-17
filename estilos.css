@@ -1,0 +1,34 @@
+.pagination-panel{
+	position: relative;
+	display: inline-block;
+	background-color: black;
+	border-radius: 6px;
+}
+.pagination-panel .indicator{
+	color: white;
+	background-color: black;
+	font-weight: bold;
+	font-size: 15px;
+	padding: 5px;
+}
+.pagination-panel button{
+	background-color: black;
+	color: white;
+	cursor: pointer;
+}
+.pagination-panel button{
+	color: white;
+	background-color: black;
+	padding: 10px 5px;
+	cursor: pointer;
+	border: none;
+}
+.pagination-panel button:hover{
+	background-color: #413333;
+}
+.pagination-panel button:first-child{
+	border-radius: 6px 0px 0px 6px;
+}
+.pagination-panel button:last-child{
+	border-radius: 0px 6px 6px 0px;
+}
