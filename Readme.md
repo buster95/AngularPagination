@@ -66,6 +66,8 @@ controller('ctrlmain', function($scope){
 ```html
 <div ng-controller="ctrlmain">
 	<ng-pagination-search pagination-id="usuarios"></ng-pagination-search>
+	<br />
+	<input ng-pagination-search="usuarios">
 
 	<li ng-pagination="user in usuarios" ng-pagination-size="1">{{user.nombre}}</li>
 
