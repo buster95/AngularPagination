@@ -1,20 +1,18 @@
-AngularStorage Module
+AngularPagination Module
 =====================
 
 ### USO DEL MODULO ###
-**Modulo** `ngStorage`
-
-**Servicio** `$storage`
+*Modulo** `ngPagination`
 
 ```javascript
 angular.module('myapp',['ngStorage']).
-controller('ctrlmain', function($scope, $storage){
+controller('ctrlmain', function($scope){
 
 });
 ```
 
-### METODOS Y SUBMETODOS ###
-* **$storage.local**
+### DIRECTIVAS ###
+* **ngPagination**
 
 > Nos permite acceder al LocalStorage del navegador en caso de que este
 no este habilitado nos guarda el dato en las cookies
