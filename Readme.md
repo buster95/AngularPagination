@@ -26,7 +26,7 @@ el modulo toma por defecto
 
 * **ng-pagination-control**
 
-> Esta directiva solo se puede utilizar como elemento y es necesario que vaya precedida por una
+> Esta Directiva solo se puede utilizar como elemento y es necesario que vaya precedida por una
 propiedad llamada **pagination-id="usuarios"** este parametro debe ser el nombre de la variable
 que se esta paginando
 
@@ -34,34 +34,34 @@ que se esta paginando
 <ng-pagination-control pagination-id="usuarios"></ng-pagination-control>
 ```
 
-* **$storage.cookies**
+* **ng-pagination-search**
 
-> Nos permite acceder a las cookies en caso de no estar activado nos mandara una exception
+> Esta Directiva solo se puede utilizar como elemento y es necesario la propiedad **pagination-id="usuarios"**
+que llevaria como valor la variable donde se encuentran los datos
 
-	1. $storage.cookie.set('key',value);
+```html
+<ng-pagination-search pagination-id="usuarios"></ng-pagination-search>
+```
 
-	Nos permite guardar una variable en las cookies
+### EJEMPLO ###
+> Añadimos ngPagination a nuestro modulo de la aplicacion una vez añadido es simple podemos
+comenzar a hacer uso de nuestras Directivas
 
-	2. $storage.cookie.get('key');
+```javascript
+angular.module('myapp',['ngStorage']).
+controller('ctrlmain', function($scope){
+	$scope.usuarios = [{id: 1, nombre:'Walter'},{id:2 , nombre:'Andrea'},{id:3, nombre:'Axel'}];
+});
+```
 
-	Nos retorna el valor de una variable en las cookies por su key
+> Este seria el codigo que tendriamos en nuestro html
 
-	3. $storage.cookie.remove('key');
+```html
+<div ng-controller="ctrlmain">
+	<ng-pagination-search pagination-id="usuarios"></ng-pagination-search>
 
-	Nos elimina una variable de las cookies por su key
+	<li ng-pagination="user un usuarios" ng-pagination-size="1">{{user.nombre}}</li>
 
-	4. $storage.cookie.removeAll();
-
-	Nos limpia las cookies elimina todo
-
-	5. $storage.cookie.bindScope($scope, 'key');
-
-	Nos hace un binding de una variable en las cookies con una
-	variable del mismo nombre en el $scope, si es modificada en el $scope
-	se modifica en la cookie
-
-	6. $storage.cookie.setDomain('domain');
-
-	7. $storage.cookie.setMaxAge(age_number_seg);
-
-	8. $storage.cookie.setPath('path');
+	<ng-pagination-control pagination-id="usuarios"></ng-pagination-control>
+</div>
+```
