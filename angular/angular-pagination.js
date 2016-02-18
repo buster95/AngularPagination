@@ -1,4 +1,4 @@
-angular.module('ngPagination', []).
+var application = angular.module('ngPagination', []).
 
 filter('startFrom', function() {
     return function(input, inicio) {
@@ -72,9 +72,12 @@ directive('ngPagination', function($compile, $parse, $paginationRegister){
     }
 
 	return {
-		priority: 15,
-	    restrict: 'A',
-		scope: false,
+		terminal: true, // NOS SIRVE POR SI TENEMOS OTRA DIRECTIVA DENTRO DEL  NG-REPEAT
+        multiElement: true,
+        priority: 15,
+	    restrict: 'A', // RESTRINGIDO SOLO A ATTRIBUTO
+		scope: false, // NOS DICE QUE EL SCOPE ES EL MISMO DEL CONTROLADOR
+
 		compile: function(tElement, tAttrs) {
 			// COMPILE RETURNED LINKED
 			return function(scope, element, attr){
@@ -127,7 +130,7 @@ directive('ngPagination', function($compile, $parse, $paginationRegister){
 
 
 
-directive('ngPaginationControl', function($parse, $compile, $paginationRegister){
+directive('ngPaginationControl', function($compile, $parse, $paginationRegister){
 	// VARIABLES PARA CREAR ESTILO
 	var fondo='#337AB7';
 	var fondoHover='#286090';
@@ -241,51 +244,123 @@ directive('ngPaginationControl', function($parse, $compile, $paginationRegister)
 
 
 
+directive('ngPaginationNext', function(){
+	return {
+	};
+}).
+
+
+
+directive('ngPaginationBefore', function(){
+	return {
+	};
+});
+
+
+
+
+
+
+
+
+
+
+// METODO PARA FILTRAR DATOS DE UN JSON
+function filtrar(datos, filtro) {
+	var busqueda=[];
+	angular.forEach(datos, function(fila) {
+		for(key in fila){
+			var propiedad = fila[key];
+			if (CompararFn(propiedad, filtro)) {
+				busqueda.push(fila);
+				return;
+			}
+		}
+	});
+	return busqueda;
+};
+
+// METODO PARA COMPARAR UN DATO CON OTRO DATO
+// PUEDE SER UN DATO CON UN POSIBLE FILTRO
+function CompararFn(value1, value2) {
+	if(angular.isString(value1)){
+		value1 = value1.toLowerCase();
+	}
+	if (angular.isString(value2)) {
+		value2 = value2.toLowerCase();
+	}
+
+	if (angular.isString(value1) &&
+		(angular.isString(value2) || angular.isNumber(value2)) ) {
+		if (value1.indexOf(value2)>-1) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+
+
+application.directive('ngPaginationSearch', function($compile, $parse, $paginationRegister){
+
+	return {
+		priority: 5,
+		scope: false,
+		restrict: 'A',
+
+		compile: function(iElement, iAttrs){
+			// ESTA DIRECTIVA SOLO PUEDE SER USADA POR UN ELEMENTO INPUT
+			// PARA ELLO VERIFICAMOS EL TIPO DE ELEMENTO EN EL QUE HA SIDO USADA
+			if(iElement[0].localName.toLowerCase()!='input'){
+				throw "DIRECTIVE NG-PAGINATION-SEARCH SOLO PUEDE SER USADA POR UN ELEMENTO INPUT\n";
+			}
+
+			var registro = new $paginationRegister();
+			if(iElement.attr('ng-pagination-search')==undefined
+				|| iElement.attr('ng-pagination-search')==''){
+				throw "DIRECTIVE NG-PAGINATION-SEARCH NOT VALUE\n";
+			}else{
+				registro.set(iElement.attr('ng-pagination-search'));
+			}
+
+			return function (scope, element, attrs){
+				var data = $parse(registro.getDataNotation())(scope);
+
+				var tempDataNotation = registro.getDataNotation()+'_tmp';
+				var tempData = $parse(tempDataNotation).assign(scope, data);
+
+				// VARIABLES PARA GENERAR ESTILO
+				var modelo = registro.getSearchNotation();
+				element.attr('ng-model',modelo);
+				element.removeAttr('ng-pagination-search');
+
+				// EVENTO WATCH PARA EL CAMBIO DEL INPUT EN BUSQUEDA
+				scope.$watch(modelo, function () {
+					// CAPTURANDO EL VALOR DEL INPUT
+					var filtro = $parse(modelo)(scope);
+					// AL MOMENTO DE BUSQUEDA MANDAR EL CURRENT PAGE A 0 PARA QUE SE VAYA A LA PRIMERA PAGINA
+					$parse(registro.getCurrentNotation()).assign(scope, 0);
+					if(filtro==undefined || filtro==''){
+						$parse(registro.getDataNotation()).assign(scope, tempData);
+					}else{
+						var resultado = filtrar(tempData, filtro);
+						$parse(registro.getDataNotation()).assign(scope, resultado);
+					}
+				});
+
+				$compile(element)(scope);
+			}
+		}
+	};
+}).
+
+
+
 
 
 
 directive('ngPaginationSearch', function($compile, $parse, $paginationRegister){
-	function filtrar(datos, filtro) {
-		var busqueda=[];
-		angular.forEach(datos, function(fila) {
-			for(key in fila){
-				var propiedad = fila[key];
-				if (CompararFn(fila[key], filtro)) {
-    				busqueda.push(fila);
-    				return;
-				}
-			}
-		});
-		return busqueda;
-    }
-
-    function CompararFn(value1, value2) {
-    	if(angular.isString(value1)){
-    		value1 = value1.toLowerCase();
-    	}
-   		if (angular.isString(value2)) {
-    		value2 = value2.toLowerCase();
-    	}
-
-    	if (angular.isString(value1) && angular.isString(value2)) {
-    		if (value1.indexOf(value2)>-1) {
-    			return true;
-    		}
-    	}
-    	if(angular.isNumber(value1) && angular.isNumber(value2)){
-    		if(value1==value2){
-    			return true;
-    		}
-    	}
-
-    	if (angular.isString(value1) && angular.isNumber(value2)) {
-    		if(value1.indexOf(value2)>-1){
-    			return true;
-    		}
-    	}
-
-    	return false;
-    }
 
 	return {
 		priority: 5,
@@ -309,13 +384,13 @@ directive('ngPaginationSearch', function($compile, $parse, $paginationRegister){
 				var tempDataNotation = registro.getDataNotation()+'_tmp';
 				var tempData = $parse(tempDataNotation).assign(scope, data);
 
-
 				// VARIABLES PARA GENERAR ESTILO
 				var clases;
-				var id_element;
+				var identificador;
 				var value;
 				var name;
 				var placeholder;
+				var estilo
 				var modelo = registro.getSearchNotation();
 				var input = angular.element('<input ng-model="'+modelo+'">');
 
@@ -323,9 +398,13 @@ directive('ngPaginationSearch', function($compile, $parse, $paginationRegister){
 					clases = element.attr('class');
 					input.attr('class',clases);
 				}
+				if(element.attr('style')!=undefined && element.attr('style')!=''){
+					clases = element.attr('style');
+					input.attr('style',clases);
+				}
 				if(element.attr('id')!=undefined && element.attr('id')!=''){
-					id_element = element.attr('id');
-					input.attr('class',clases);
+					identificador = element.attr('id');
+					input.attr('id',identificador);
 				}
 				if(element.attr('value')!=undefined && element.attr('value')!=''){
 					value = element.attr('value');

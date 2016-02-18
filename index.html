@@ -8,7 +8,8 @@
 <body ng-app="myapp">
 
 <div ng-controller="ctrlmain">
-	<ng-pagination-search pagination-id="usuarios" placeholder="ingrese busqueda"></ng-pagination-search>
+	<input type="text" placeholder="Ingrese Busqueda" ng-pagination-search="usuarios">
+	<br>
 	<li ng-pagination="user in usuarios" ng-pagination-size="10">{{user.nombre}}</li>
 	<ng-pagination-control pagination-id="usuarios" color="white" height="35px"></ng-pagination-control>
 
