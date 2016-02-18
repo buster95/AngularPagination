@@ -6,7 +6,7 @@ AngularPagination Module
 **Modulo** `ngPagination`
 
 ```javascript
-angular.module('myapp',['ngStorage']).
+angular.module('myapp',['ngPagination']).
 controller('ctrlmain', function($scope){
 	$scope.usuarios = [{id: 1, nombre:'Walter'},{id:2 , nombre:'Andrea'},{id:3, nombre:'Axel'}];
 });
@@ -48,7 +48,7 @@ que llevaria como valor la variable donde se encuentran los datos
 comenzar a hacer uso de nuestras Directivas
 
 ```javascript
-angular.module('myapp',['ngStorage']).
+angular.module('myapp',['ngPagination']).
 controller('ctrlmain', function($scope){
 	$scope.usuarios = [{id: 1, nombre:'Walter'},{id:2 , nombre:'Andrea'},{id:3, nombre:'Axel'}];
 });
