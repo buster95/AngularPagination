@@ -17,7 +17,7 @@ controller('ctrlmain', function($scope){
 
 > Directiva para crear la pagination el modulo la sustituye por una directiva ng-repeat
 se puede usar la directiva ng-pagination-size para definir el numero de elementos por pagina
-el modulo toma por defecto
+el modulo toma el **numero de elementos por pagina** como **5** por defecto
 
 ```html
 <li ng-pagination="user in usuarios">{{user.nombre}}</li>
