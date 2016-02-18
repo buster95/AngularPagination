@@ -26,30 +26,13 @@ el modulo toma por defecto
 
 * **ng-pagination-control**
 
-> Esta directiva solo se puede utilizar como elemento y es necesario que vaya precedida por
-otra directiva llamada pagination-id="usuarios" que tendria como parametro el nombre de la variable
+> Esta directiva solo se puede utilizar como elemento y es necesario que vaya precedida por una
+propiedad llamada **pagination-id="usuarios"** este parametro debe ser el nombre de la variable
+que se esta paginando
 
-	1. $storage.session.set('key',value);
-
-	Nos permite guardar una variable en el sessionStorage
-
-	2. $storage.session.get('key');
-
-	Nos retorna el valor de una variable por su key
-
-	3. $storage.session.remove('key');
-
-	Nos elimina una variable del sessionStorage por su key
-
-	4. $storage.session.removeAll();
-
-	Nos limpia el sessionStorage eliminando todas las variables
-
-	5. $storage.bindScope($scope,'key');
-
-	Nos hace un binding de una variable en el sessionStorage con una variable del mismo
-	nombre en el $scope de tal modo que si es modificada en el $scope se modificara
-	en el sessionStorage
+```html
+<ng-pagination-control pagination-id="usuarios"></ng-pagination-control>
+```
 
 * **$storage.cookies**
 
