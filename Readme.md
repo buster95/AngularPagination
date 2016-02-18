@@ -2,17 +2,18 @@ AngularPagination Module
 =====================
 
 ### USO DEL MODULO ###
-*Modulo** `ngPagination`
+
+**Modulo** `ngPagination`
 
 ```javascript
 angular.module('myapp',['ngStorage']).
 controller('ctrlmain', function($scope){
-
+	$scope.usuarios = [{id: 1, nombre:'Walter'},{id:2 , nombre:'Andrea'},{id:3, nombre:'Axel'}];
 });
 ```
 
 ### DIRECTIVAS ###
-* **ngPagination**
+* **ng-pagination="user in usuarios"**
 
 > Nos permite acceder al LocalStorage del navegador en caso de que este
 no este habilitado nos guarda el dato en las cookies
