@@ -16,15 +16,18 @@ controller('ctrlmain', function($scope){
 * **ng-pagination="user in usuarios"**
 
 > Directiva para crear la pagination el modulo la sustituye por una directiva ng-repeat
+se puede usar la directiva ng-pagination-size para definir el numero de elementos por pagina
+el modulo toma por defecto
 
 ```html
 <li ng-pagination="user un usuarios">{{user.nombre}}</li>
+<li ng-pagination="user un usuarios" ng-pagination-size="1">{{user.nombre}}</li>
 ```
 
-* **$storage.session**
+* **ng-pagination-control**
 
-> Nos permite acceder al SessionStorage del navegador en caso de que no
-este habilitado nos guarda el dato en las cookies
+> Esta directiva solo se puede utilizar como elemento y es necesario que vaya precedida por
+otra directiva llamada pagination-id="usuarios" que tendria como parametro el nombre de la variable
 
 	1. $storage.session.set('key',value);
 
