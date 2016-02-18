@@ -15,30 +15,11 @@ controller('ctrlmain', function($scope){
 ### DIRECTIVAS ###
 * **ng-pagination="user in usuarios"**
 
-> Nos permite acceder al LocalStorage del navegador en caso de que este
-no este habilitado nos guarda el dato en las cookies
+> Directiva para crear la pagination el modulo la sustituye por una directiva ng-repeat
 
-	1. $storage.local.set('key',value);
-
-	Nos permite guardar una variable en el localStorage
-
-	2. $storage.local.get('key');
-
-	Nos retorna el valor de una variable por su key
-
-	3. $storage.local.remove('key');
-
-	Nos elimina una variable del localStorage por su key
-
-	4. $storage.local.removeAll();
-
-	Nos limpia el localStorage eliminando todas las variables
-
-	5. $storage.bindScope($scope,'key');
-
-	Nos hace un binding de una variable en el localStorage con una variable del mismo
-	nombre en el $scope de tal modo que si es modificada en el $scope se modificara
-	en el localStorage
+```html
+<li ng-pagination="user un usuarios">{{user.nombre}}</li>
+```
 
 * **$storage.session**
 
