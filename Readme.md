@@ -20,8 +20,8 @@ se puede usar la directiva ng-pagination-size para definir el numero de elemento
 el modulo toma por defecto
 
 ```html
-<li ng-pagination="user un usuarios">{{user.nombre}}</li>
-<li ng-pagination="user un usuarios" ng-pagination-size="1">{{user.nombre}}</li>
+<li ng-pagination="user in usuarios">{{user.nombre}}</li>
+<li ng-pagination="user in usuarios" ng-pagination-size="1">{{user.nombre}}</li>
 ```
 
 * **ng-pagination-control**
@@ -60,7 +60,7 @@ controller('ctrlmain', function($scope){
 <div ng-controller="ctrlmain">
 	<ng-pagination-search pagination-id="usuarios"></ng-pagination-search>
 
-	<li ng-pagination="user un usuarios" ng-pagination-size="1">{{user.nombre}}</li>
+	<li ng-pagination="user in usuarios" ng-pagination-size="1">{{user.nombre}}</li>
 
 	<ng-pagination-control pagination-id="usuarios"></ng-pagination-control>
 </div>
