@@ -36,18 +36,10 @@ que se esta paginando
 
 * **ng-pagination-search**
 
-> Esta Directiva se puede utilizar como elemento y como atributo, al usar esta directiva
-tanto como elemento o como atributo ambas implementaran el mismo modelo
+> Esta Directiva se utiliza como atributo se pasa como
+valor el nombre de la variable de los datos
 
-> si desea utilizarla como elemento es necesario la propiedad **pagination-id="usuarios"**
-que llevaria como valor la variable donde se encuentran los datos,
-
-> si desea utilizarla como atributo llevaria como valor el nombre de la variable de los datos
-**ng-pagination-search="usuarios"** como atributo solo puede ser utilizada por los elementos input
-
-```html
-<ng-pagination-search pagination-id="usuarios"></ng-pagination-search>
-```
+**ng-pagination-search="usuarios"** solo puede ser utilizada por los elementos input
 
 ```html
 <input ng-pagination-search="usuarios" style="" class="form-control">
@@ -68,7 +60,6 @@ controller('ctrlmain', function($scope){
 
 ```html
 <div ng-controller="ctrlmain">
-	<ng-pagination-search pagination-id="usuarios"></ng-pagination-search>
 	<input ng-pagination-search="usuarios">
 
 	<li ng-pagination="user in usuarios" ng-pagination-size="1">{{user.nombre}}</li>
